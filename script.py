@@ -29,7 +29,7 @@ def input_modifier(user_input, state):
             shared.processing_message = "*Searching online...*"
             try:
                 # print(f'{state["context_instruct"]}')
-                query = user_input.strip("search").strip()
+                query = user_input.replace("search", "").strip()
                 search_results = search(query, num_results=1)
                 search_data = [(get_text(result), result) for result in search_results]
                 # state[
