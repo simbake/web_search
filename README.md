@@ -1,3 +1,4 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z3OS8CM)
 # web_search [WIP]
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
