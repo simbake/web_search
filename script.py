@@ -1,12 +1,13 @@
 import gradio as gr
 import modules.shared as shared
-from googlesearch import search
 from bs4 import BeautifulSoup
 import re
 import requests
+import urllib
+from requests_html import HTML
+from requests_html import HTMLSession
 
 search_access = False
-
 
 def ui():
     global search_access
@@ -22,34 +23,18 @@ def update_search_access(checkbox_value):
 
 
 def input_modifier(user_input, state):
-    # print(state['context'])
     global search_access
     if search_access:
         if user_input.lower().startswith("search"):
             shared.processing_message = "*Searching online...*"
-            try:
-                # print(f'{state["context_instruct"]}')
-                query = user_input.strip("search").strip()
-                search_results = search(query, num_results=1)
-                search_data = [(get_text(result), result) for result in search_results]
-                # state[
-                #    "context_instruct"
-                # ] = "Answer the question according to the google search results provided and provide source where necessary"
-                state[
+            query = user_input.replace("search", "").strip()
+            search_data = google_results(query,state)
+            state[
                     "context"
-                ] = "Summarize the online results and answer the question correctly, provide links where necessary"
-                # print(f"online results: {search_data}")
-                user_prompt = f"{user_input}\n online results: {search_data}"
-                print(f"{user_prompt}")
-                return user_prompt
-            except Exception as e:
-                # print the type and message of the exception
-                print(type(e), e)
-                state[
-                    "context_instruct"
-                ] = "Tell the user they are experiencing connection issues"
-                return ""
-
+                ] = "Retrieve the answer to User question in Google search results and give a relevant answer."
+                
+            user_prompt = f"User question: {user_input}\n Google search results: {[search_data]}"
+            return str(user_prompt)               
     shared.processing_message = "*Typing...*"
     return user_input
 
@@ -65,18 +50,28 @@ def bot_prefix_modifier(prefix):
 def print_data(data):
     return data
 
-
-def get_text(url):
-    response = requests.get(url)
-    soup = "\n".join(
-        [
-            p.text
-            for p in BeautifulSoup(response.text, "html.parser").find_all(
-                ["section", "p"]
-            )
-        ]
-    )
-    soup = soup[:2044]
-    text = re.sub(r"\s+", " ", soup.strip())
-    output = "\n".join([text, f" -Source: {response.url}"])
-    return output
+def google_results(query,state):
+    query = urllib.parse.quote_plus(query)
+    url="https://www.google.com/search?hl=en&q="+query
+    try:
+        session = HTMLSession()
+        response = session.get(url)
+        search_results = response.html.find('#rso', first=True).raw_html
+        bs = BeautifulSoup(search_results, "html.parser")
+        results = bs.find_all("div")
+        unwanted_tags = ["script","style","noscript","a","img"]
+        filtered_result = [tag.text for tag in results if tag.name not in unwanted_tags]
+        soup = "\n".join(
+            [
+            p
+            for p in filtered_result
+            ]
+        )
+        text = soup.strip()    
+        return text[:2045]
+    except requests.exceptions.RequestException as e:
+        print(e)
+        state[
+                    "context_instruct"
+                ] = "Tell the user they are experiencing connection issues"
+        return ""
