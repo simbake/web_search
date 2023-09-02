@@ -20,7 +20,7 @@
 
  Requirements
 
- ```googlesearch-python``` pip package module
+ - Google chrome browser
 
  How to install
 
