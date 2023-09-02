@@ -1,13 +1,33 @@
 import gradio as gr
 import modules.shared as shared
-from bs4 import BeautifulSoup
-import re
-import requests
+import chromedriver_autoinstaller
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 import urllib
-from requests_html import HTML
-from requests_html import HTMLSession
 
 search_access = False
+chromedriver_autoinstaller.install()
+service = Service()
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+options.add_argument('--disable-infobars')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
+options.add_argument('--remote-debugging-port=9222')
+
+def google_results(query,state):
+    
+    driver = webdriver.Chrome(service=service,options=options)
+    query = urllib.parse.quote_plus(query)
+    url="https://www.google.com/search?hl=en&q="+query
+    driver.get(url)
+    html = driver.find_element(By.CLASS_NAME, 'ULSxyf').text
+    driver.quit()
+    return html
+
 
 def ui():
     global search_access
@@ -28,12 +48,11 @@ def input_modifier(user_input, state):
         if user_input.lower().startswith("search"):
             shared.processing_message = "*Searching online...*"
             query = user_input.replace("search", "").strip()
-            search_data = google_results(query,state)
             state[
                     "context"
-                ] = "Retrieve the answer to User question in Google search results and give a relevant answer."
-                
-            user_prompt = f"User question: {user_input}\n Google search results: {[search_data]}"
+                ] = "The answer to User question is provided to you in Google search results. Give a truthful and correct answer. Answer the question"
+            search_data = google_results(query,state) 
+            user_prompt = f"User question: {user_input}\n Google search results: {search_data}"
             return str(user_prompt)               
     shared.processing_message = "*Typing...*"
     return user_input
@@ -45,33 +64,3 @@ def output_modifier(output):
 
 def bot_prefix_modifier(prefix):
     return prefix
-
-
-def print_data(data):
-    return data
-
-def google_results(query,state):
-    query = urllib.parse.quote_plus(query)
-    url="https://www.google.com/search?hl=en&q="+query
-    try:
-        session = HTMLSession()
-        response = session.get(url)
-        search_results = response.html.find('#rso', first=True).raw_html
-        bs = BeautifulSoup(search_results, "html.parser")
-        results = bs.find_all("div")
-        unwanted_tags = ["script","style","noscript","a","img"]
-        filtered_result = [tag.text for tag in results if tag.name not in unwanted_tags]
-        soup = "\n".join(
-            [
-            p
-            for p in filtered_result
-            ]
-        )
-        text = soup.strip()    
-        return text[:2045]
-    except requests.exceptions.RequestException as e:
-        print(e)
-        state[
-                    "context_instruct"
-                ] = "Tell the user they are experiencing connection issues"
-        return ""

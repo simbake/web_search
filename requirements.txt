@@ -1,1 +1,2 @@
-requests-html
+selenium
+chromedriver-autoinstaller
