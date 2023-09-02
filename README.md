@@ -1,7 +1,8 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z3OS8CM)
 # web_search [WIP]
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
- Thanks to [CyberViking](https://github.com/TheCyberViking) for the initial simple web search code. You can see it [here](https://github.com/oobabooga/text-generation-webui/discussions/932)
+ Thanks to [TheCyberViking](https://github.com/TheCyberViking) for the initial simple web search code. You can see it [here](https://github.com/oobabooga/text-generation-webui/discussions/932)
  
  
  This extension enables' a language model to receive google search data according to the users' input.[Currently supports google search only]
