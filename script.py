@@ -1,6 +1,5 @@
 import gradio as gr
 import modules.shared as shared
-import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -9,7 +8,6 @@ from selenium.webdriver.chrome.service import Service
 import urllib
 
 search_access = False
-chromedriver_autoinstaller.install()
 service = Service()
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
