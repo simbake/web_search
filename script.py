@@ -2,8 +2,6 @@ import gradio as gr
 import modules.shared as shared
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 import urllib
 
@@ -14,9 +12,10 @@ options.add_argument('headless')
 options.add_argument('--disable-infobars')
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--no-sandbox')
+options.add_argument('--disable-gpu')
 options.add_argument('--remote-debugging-port=9222')
 
-def google_results(query,state):
+def google_results(query):
     
     driver = webdriver.Chrome(service=service,options=options)
     query = urllib.parse.quote_plus(query)
@@ -49,7 +48,7 @@ def input_modifier(user_input, state):
             state[
                     "context"
                 ] = "The answer to User question is provided to you in Google search results. Give a truthful and correct answer. Answer the question"
-            search_data = google_results(query,state) 
+            search_data = google_results(query) 
             user_prompt = f"User question: {user_input}\n Google search results: {search_data}"
             return str(user_prompt)               
     shared.processing_message = "*Typing...*"
