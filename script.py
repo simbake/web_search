@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 import urllib
 
-search_access = False
+search_access = True
 service = Service()
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -45,9 +45,7 @@ def input_modifier(user_input, state):
         if user_input.lower().startswith("search"):
             shared.processing_message = "*Searching online...*"
             query = user_input.replace("search", "").strip()
-            state[
-                    "context"
-                ] = "The answer to User question is provided to you in Google search results. Give a truthful and correct answer. Answer the question"
+            state["context"] = state["context"] + "Relevant search results are in the Google search results. Use this info in the response."
             search_data = google_results(query) 
             user_prompt = f"User question: {user_input}\n Google search results: {search_data}"
             return str(user_prompt)               
