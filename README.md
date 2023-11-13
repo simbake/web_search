@@ -1,5 +1,5 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z3OS8CM)
-# web_search [WIP]
+No longer maintained. I no longer have hardware to run language models, someone else should fork and continue development.
+# web_search
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
  Thanks to [TheCyberViking](https://github.com/TheCyberViking) for the initial simple web search code. You can see it [here](https://github.com/oobabooga/text-generation-webui/discussions/932)
