@@ -1,4 +1,4 @@
-No longer maintained. I no longer have hardware to run language models, someone else should fork and continue development.
+No longer maintained. I no longer have GPU to run language models, someone else should fork and continue development.
 # web_search
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
