@@ -45,6 +45,8 @@ def input_modifier(user_input, state):
             query = search_query.group(1)
         elif user_input.lower().startswith("search"):
             query = user_input.replace("search", "").strip()
+        else:
+            query = ""
 
         if not query:
             shared.processing_message = "*Typing...*"
