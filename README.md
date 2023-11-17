@@ -8,15 +8,19 @@ No longer maintained. I no longer have GPU to run language models, someone else 
  |:---:|:---:|
 | ![Screenshot from 2023-09-02 16-45-22](https://github.com/simbake/web_search/assets/6049383/36c52e5a-4146-444e-b254-ed7c48a0e946) |![Screenshot from 2023-09-02 16-43-01](https://github.com/simbake/web_search/assets/6049383/d09fa1f0-a1b1-4f45-adb3-9c9b1c517246) |
 
- 
+
  This extension enables' a language model to receive google search data according to the users' input.[Currently supports google search only]
 
 
  How to use
- 
- One needs to type search then what you want to search for, example:
- 
+
+ Type search then what you want to search for, example:
+
  Type ```search the weather in Nairobi, Kenya today.```
+
+  Alternatively, you can type search followed by search querry in double quoation marks and then a question to be answered, e.g.:
+
+ Type ```search "the weather in Amsterdam" and tell me what should I wear.```
 
  Requirements
 
