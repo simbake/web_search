@@ -18,7 +18,7 @@ No longer maintained. I no longer have GPU to run language models, someone else 
 
  Type ```search the weather in Nairobi, Kenya today.```
 
-  Alternatively, you can type search followed by search querry in double quoation marks and then a question to be answered, e.g.:
+  Alternatively, you can type search followed by search querry in double quotation marks and then a question to be answered, e.g.:
 
  Type ```search "the weather in Amsterdam" and tell me what should I wear.```
 
