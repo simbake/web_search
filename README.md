@@ -1,4 +1,7 @@
-No longer maintained. I no longer have GPU to run language models, someone else should fork and continue development.
+No longer maintained.
+
+I am still willing to continue development, but I need a GPU. You can help me get a GPU by donating and showing your support. Many thanks for the love and support you have shown so far, even a star helps to make the project reach more users. The goal is $300 to get a used GPU in good condition.
+
 # web_search
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
