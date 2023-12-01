@@ -3,28 +3,68 @@ import modules.shared as shared
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-import urllib
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException,TimeoutException
+from googlesearch import search
+from fake_useragent import UserAgent
+from webdriver_manager.chrome import ChromeDriverManager
 import re
+import urllib
+import html2text
 
+ua = UserAgent()
+user_agent = ua.random
+print(user_agent)
 search_access = True
-service = Service()
-options = webdriver.ChromeOptions()
+service = Service(ChromeDriverManager().install())
+options = Options()
 options.add_argument('headless')
+options.add_argument(f'--user-agent={user_agent}')
 options.add_argument('--disable-infobars')
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-gpu')
+options.add_argument('--ignore-certificate-errors-spki-list')
+options.add_argument('--ignore-ssl-errors')
+options.add_argument('--log-level=INT')
+options.add_argument("disable-blink-features")
+options.add_argument("disable-blink-features=AutomationControlled")
+options.add_argument("--disable-3d-apis")
+options.add_argument("--window-size=1920,1080")
 options.add_argument('--remote-debugging-port=9222')
 
-def google_results(query):
+def websearch_results(url):
 
     driver = webdriver.Chrome(service=service,options=options)
-    query = urllib.parse.quote_plus(query)
-    url="https://www.google.com/search?hl=en&q="+query
-    driver.get(url)
-    html = driver.find_element(By.CLASS_NAME, 'ULSxyf').text
+    driver.set_page_load_timeout(3)
+    html = ""
+    output = ""
+    h = html2text.HTML2Text()
+    
+    try:
+        driver.get(url)
+    except TimeoutException:
+        driver.execute_script("window.stop();")
+        try:
+            h.ignore_links = True
+            main_element = driver.find_element(By.CSS_SELECTOR, "[id~='content']")
+            html += h.handle(main_element.get_attribute('innerHTML')) if main_element.text else ""
+        except NoSuchElementException:
+            try:
+                content_element = driver.find_element(By.CSS_SELECTOR, "[class~='content']")
+                html += h.handle(content_element.get_attribute('innerHTML')) if content_element.text else ""
+            except NoSuchElementException:
+                try:
+                   content_element = driver.find_element(By.TAG_NAME, "main")
+                   html += h.handle(content_element.get_attribute('innerHTML')) if content_element.text else ""
+                except NoSuchElementException:
+                    pass
+    except NoSuchElementException as e:
+        pass
+    
+    output = html
     driver.quit()
-    return html
+    return output
 
 def ui():
     global search_access
@@ -41,6 +81,7 @@ def input_modifier(user_input, state):
     global search_access
     if search_access:
         search_query = re.search(r'search\s+"([^"]+)"', user_input, re.IGNORECASE)
+
         if search_query:
             query = search_query.group(1)
         elif user_input.lower().startswith("search"):
@@ -49,18 +90,31 @@ def input_modifier(user_input, state):
             query = ""
 
         if not query:
-            shared.processing_message = "*Typing...*"
             return user_input
         else:
             shared.processing_message = f"*Searching online for {query}*"
-            state["context"] = state["context"] + "Relevant search results are in the Google search results. Use this info in the response. If no results are found, say so and offer information from the memory."
-            search_data = google_results(query)
-            if not search_data:
+            state["context_instruct"] += "The user question is in User question. Relevant search results are in the Google search results, this is up to date information. Be truthfull and follow what is provided in the Google search results. Use Google search results in the response."
+            try:
+                search_data = ""
+                for result in search(query, num_results=2):
+                    search_data += websearch_results(result)     
+            except Exception as e:
+                # print the type and message of the exception
+                print(type(e), e)
+                state[
+                    "context"
+                ] += "Tell the user an error ocurred"
+                pass         
+            if search_data=="":
+                print("No results found!")
+                state[
+                    "context"
+                ] += "Tell the user no results were found"
                 user_prompt = f"User question: {user_input}\n Google search results: NO RESULTS FOUND"
             else:
+                search_data = search_data[:1024]
                 user_prompt = f"User question: {user_input}\n Google search results: {search_data}"
-            return str(user_prompt)
-    shared.processing_message = "*Typing...*"
+                return user_prompt
     return user_input
 
 
