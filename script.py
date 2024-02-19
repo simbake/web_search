@@ -93,7 +93,7 @@ def input_modifier(user_input, state):
             return user_input
         else:
             shared.processing_message = f"*Searching online for {query}*"
-            state["context_instruct"] += "The user question is in User question. Relevant search results are in the Google search results, this is up to date information. Be truthfull and follow what is provided in the Google search results. Use Google search results in the response."
+            state["context"] += "The user question is in User question. Relevant search results are in the Google search results, this is up to date information. Be truthfull and follow what is provided in the Google search results. Use Google search results in the response."
             try:
                 search_data = ""
                 for result in search(query, num_results=2):
