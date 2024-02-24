@@ -1,4 +1,4 @@
-No longer maintained.
+No longer maintained. I hope to come back to this when I get a good PC. Thanks guys for the support.
 
 # web_search
  Web search extension for [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
